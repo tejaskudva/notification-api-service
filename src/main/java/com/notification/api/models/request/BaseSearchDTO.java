@@ -3,7 +3,6 @@ package com.notification.api.models.request;
 import java.lang.reflect.Field;
 import java.util.Optional;
 
-import org.apache.kafka.common.Uuid;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.PageRequest;

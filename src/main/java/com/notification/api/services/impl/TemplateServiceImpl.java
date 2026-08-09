@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import com.notification.api.dao.interfaces.TemplateDao;
 import com.notification.api.exception.ValidationException;
-import com.notification.api.models.context.NotificationContext;
 import com.notification.api.models.context.NotificationContextHolder;
 import com.notification.api.models.entity.Template;
 import com.notification.api.models.request.CreateTemplateRequest;
