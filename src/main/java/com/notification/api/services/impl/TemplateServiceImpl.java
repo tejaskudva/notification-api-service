@@ -13,8 +13,9 @@ import com.notification.api.exception.ValidationException;
 import com.notification.api.models.context.NotificationContext;
 import com.notification.api.models.context.NotificationContextHolder;
 import com.notification.api.models.entity.Template;
-import com.notification.api.models.request.CreateUpdateTemplateRequest;
+import com.notification.api.models.request.CreateTemplateRequest;
 import com.notification.api.models.request.TemplateFilterRequest;
+import com.notification.api.models.request.UpdateTemplateRequest;
 import com.notification.api.models.response.FilterTemplateResponse;
 import com.notification.api.models.response.TemplateResponse;
 import com.notification.api.models.response.TemplateResponseDTO;
@@ -33,17 +34,17 @@ class TemplateServiceImpl implements TemplateService {
     private final TemplateDao templateDao;
 
     @Override
-    public TemplateResponse createTemplate(CreateUpdateTemplateRequest templateRequest) {
+    public TemplateResponse createTemplate(CreateTemplateRequest templateRequest) {
 
-        NotificationContext context = NotificationContextHolder.getContext();
-
-        templateDao.findByTenantIdAndName(context.tenantId(), templateRequest.getName()).ifPresent(template -> {
-            throw new ValidationException(ErrorConstants.TEMPLATE_ALREADY_EXISTS, HttpStatus.BAD_REQUEST.value());
-        });
+        templateDao.findByTenantIdAndName(CommonUtils.getCurrentTenantId().toString(), templateRequest.getName())
+                .ifPresent(template -> {
+                    throw new ValidationException(ErrorConstants.TEMPLATE_ALREADY_EXISTS,
+                            HttpStatus.BAD_REQUEST.value());
+                });
 
         Template template = new Template();
         template.setId(CommonUtils.generateUUID());
-        template.setTenantId(UUID.fromString(context.tenantId()));
+        template.setTenantId(CommonUtils.getCurrentTenantId());
         BeanUtils.copyProperties(templateRequest, template);
         template.entityCreated();
 
@@ -63,10 +64,48 @@ class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
-    public TemplateResponse updateTemplate(String id, CreateUpdateTemplateRequest templateRequest) {
+    public TemplateResponse updateTemplate(String id, UpdateTemplateRequest templateRequest) {
 
+        return templateDao.findByTenantIdAndId(CommonUtils.getCurrentTenantId(), UUID.fromString(id))
+                .map(template -> {
 
-        return null;
+                    if (CommonUtils.isNotEmpty(templateRequest.getName())) {
+                        templateDao
+                                .findByTenantIdAndName(CommonUtils.getCurrentTenantId().toString(),
+                                        templateRequest.getName())
+                                .ifPresent(t -> {
+                                    throw new ValidationException(ErrorConstants.TEMPLATE_ALREADY_EXISTS,
+                                            HttpStatus.BAD_REQUEST.value());
+                                });
+
+                        template.setName(templateRequest.getName());
+                    }
+
+                    if (CommonUtils.isNotEmpty(templateRequest.getMessageTemplate())) {
+                        template.setMessageTemplate(templateRequest.getMessageTemplate());
+                    }
+
+                    if (CommonUtils.isNotEmpty(templateRequest.getTemplateVariables())) {
+                        template.setTemplateVariables(templateRequest.getTemplateVariables());
+                    }
+
+                    template.entityUpdated();
+
+                    templateDao.save(template);
+
+                    return new TemplateResponse(template);
+                })
+                .orElseThrow(() -> new ValidationException(ErrorConstants.TEMPLATE_DOES_NOT_EXIST,
+                        HttpStatus.BAD_REQUEST.value()));
     }
 
+    @Override
+    public void deleteTemplate(final String id) {
+
+        templateDao.findByTenantIdAndId(CommonUtils.getCurrentTenantId(), UUID.fromString(id))
+                .orElseThrow(() -> new ValidationException(ErrorConstants.TEMPLATE_DOES_NOT_EXIST,
+                        HttpStatus.BAD_REQUEST.value()));
+
+        templateDao.deleteTemplateById(UUID.fromString(id));
+    }
 }

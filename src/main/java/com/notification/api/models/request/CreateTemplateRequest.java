@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class CreateUpdateTemplateRequest {
+public class CreateTemplateRequest {
 
     @NotBlank(message = "Name field is required")
     private String name;

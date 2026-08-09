@@ -40,8 +40,13 @@ class TemplateDaoImpl implements TemplateDao {
     }
 
     @Override
-    public Optional<Template> findByTenantIdAndId(final String tenantId, final String id) {
-        return templateRepository.findByTenantIdAndId(UUID.fromString(tenantId), UUID.fromString(id));
+    public Optional<Template> findByTenantIdAndId(final UUID tenantId, final UUID id) {
+        return templateRepository.findByTenantIdAndId(tenantId, id);
+    }
+
+    @Override
+    public void deleteTemplateById(final UUID id) {
+        templateRepository.deleteById(id);
     }
 
 }
