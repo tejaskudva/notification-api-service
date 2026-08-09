@@ -6,4 +6,6 @@ public interface ErrorConstants {
 
     String TEMPLATE_DOES_NOT_EXIST = "Template does not exist for given ID";
 
+    String TEMPLATE_ID_REQUIRED = "Template ID is required";
+
 }

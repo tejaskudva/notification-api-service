@@ -2,6 +2,7 @@ package com.notification.api.filter;
 
 import java.io.IOException;
 
+import org.slf4j.MDC;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -30,6 +31,11 @@ public class NotificationAuthFilter extends OncePerRequestFilter {
             if (CommonUtils.isEmpty(tenantId)) {
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 response.getWriter().write("Unauthorized! API Key is required.");
+
+                String requestId = CommonUtils.generateUUID().toString();
+                MDC.put(ApplicationConstants.X_REQUEST_ID, requestId);
+                response.setHeader(ApplicationConstants.X_REQUEST_ID, requestId);
+
             }
 
             NotificationContextHolder.setContext(new NotificationContext(tenantId, false));
@@ -39,6 +45,7 @@ public class NotificationAuthFilter extends OncePerRequestFilter {
 
         if (isValidApi(request.getRequestURI())) {
             NotificationContextHolder.clear();
+            MDC.clear();
         }
     }
 

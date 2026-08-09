@@ -1,4 +1,4 @@
-package com.notification.api.controller;
+package com.notification.api.controller.template;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
