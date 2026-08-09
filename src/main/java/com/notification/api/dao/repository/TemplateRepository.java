@@ -11,4 +11,6 @@ public interface TemplateRepository extends MongoRepository<Template, UUID> {
 
     Optional<Template> findByNameIgnoreCaseAndTenantId(String name, UUID tenantId);
 
+    Optional<Template> findByTenantIdAndId(UUID tenantId, UUID id);
+
 }

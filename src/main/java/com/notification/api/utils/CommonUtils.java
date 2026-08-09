@@ -30,8 +30,8 @@ public class CommonUtils {
         return UUID.randomUUID();
     }
 
-    public static String getCurrentTenantId() {
-        return NotificationContextHolder.getContext().tenantId();
+    public static UUID getCurrentTenantId() {
+        return UUID.fromString(NotificationContextHolder.getContext().tenantId());
     }
 
 }

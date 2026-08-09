@@ -16,4 +16,14 @@ public final class NotificationContextHolder {
         NOTIFICATION_CONTEXT_THREAD_LOCAL.remove();
     }
 
+    public static void ignoreTenantIdInjection() {
+        String tenantId = NOTIFICATION_CONTEXT_THREAD_LOCAL.get().tenantId();
+        NOTIFICATION_CONTEXT_THREAD_LOCAL.set(new NotificationContext(tenantId, true));
+    }
+
+    public static void ignoreTenantIdInjection(final boolean input) {
+        String tenantId = NOTIFICATION_CONTEXT_THREAD_LOCAL.get().tenantId();
+        NOTIFICATION_CONTEXT_THREAD_LOCAL.set(new NotificationContext(tenantId, input));
+    }
+
 }

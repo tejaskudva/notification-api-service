@@ -32,7 +32,7 @@ public class NotificationAuthFilter extends OncePerRequestFilter {
                 response.getWriter().write("Unauthorized! API Key is required.");
             }
 
-            NotificationContextHolder.setContext(new NotificationContext(tenantId));
+            NotificationContextHolder.setContext(new NotificationContext(tenantId, false));
         }
 
         filterChain.doFilter(request, response);
@@ -43,7 +43,6 @@ public class NotificationAuthFilter extends OncePerRequestFilter {
     }
 
     private boolean isValidApi(String apiPath) {
-        System.out.println("API Path: " + apiPath);
         return apiPath.startsWith("/api");
     }
 }

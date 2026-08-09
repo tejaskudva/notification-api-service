@@ -3,6 +3,7 @@ package com.notification.api.models.request;
 import java.lang.reflect.Field;
 import java.util.Optional;
 
+import org.apache.kafka.common.Uuid;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.PageRequest;
@@ -10,8 +11,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 
 import com.notification.api.exception.ValidationException;
+import com.notification.api.models.context.NotificationContextHolder;
 import com.notification.api.utils.CommonUtils;
 
+import lombok.Data;
+
+@Data
 public abstract class BaseSearchDTO<T> {
 
     private Integer page;
@@ -34,6 +39,9 @@ public abstract class BaseSearchDTO<T> {
 
                 }).map(req -> Sort.by(Sort.Direction.fromString(req.getSortType().getValue()), req.getSortKey()))
                 .orElse(Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "createdAt"));
+
+        System.out.println("Page: " + page);
+        System.out.println("Size: " + size);
 
         return PageRequest.of(Optional.ofNullable(page).orElse(0),
                 Optional.ofNullable(size).orElse(10),
@@ -73,6 +81,12 @@ public abstract class BaseSearchDTO<T> {
     }
 
     private void injectTenantId(Object instance) {
+
+        if (NotificationContextHolder.getContext().ignoreTenantIdInjection()) {
+            System.out.println("Ignoring tenantId Injection");
+            return;
+        }
+
         Field tenantIdField = getField(instance.getClass(), "tenantId");
         tenantIdField.setAccessible(true);
         try {
@@ -89,7 +103,7 @@ public abstract class BaseSearchDTO<T> {
 
         while (current != null) {
             try {
-                return current.getField(name);
+                return current.getDeclaredField(name);
 
             } catch (NoSuchFieldException e) {
                 current = current.getSuperclass();
