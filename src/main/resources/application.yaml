@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: notification-api-service
+
+  mongodb:
+    host: localhost
+    port: 27017
+    database: admin
+    username: root
+    password: root
+    representation:
+      uuid: standard
