@@ -10,3 +10,26 @@ spring:
     password: root
     representation:
       uuid: standard
+
+  kafka:
+    bootstrap-servers:
+    - localhost:9092
+
+kafka:
+  ingest:
+    topic: notification.ingest
+  audit:
+    topic: notification.audit
+
+# Custom properties to manage which beans get loaded
+messaging:
+  providers:
+    kafka:
+      enabled: true
+    aws:
+      enabled: false
+  fallback:
+    rabbitmq:
+      enabled: false
+    mqtt:
+      enabled: false

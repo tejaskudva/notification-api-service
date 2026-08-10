@@ -12,6 +12,7 @@ import com.notification.api.exception.ValidationException;
 import com.notification.api.models.entity.Template;
 import com.notification.api.models.request.InjestTopicDTO;
 import com.notification.api.models.request.SendNotifRequest;
+import com.notification.api.pubsub.publisher.GenericPublisher;
 import com.notification.api.services.interfaces.NotificationService;
 import com.notification.api.utils.CommonUtils;
 
@@ -21,9 +22,10 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class NotificationServiceImpl implements NotificationService {
+class NotificationServiceImpl implements NotificationService {
 
     private final TemplateDao templateDao;
+    private final GenericPublisher genPub;
 
     @Override
     public void sendNotification(final SendNotifRequest request) {
@@ -32,8 +34,8 @@ public class NotificationServiceImpl implements NotificationService {
                 UUID.fromString(request.getTemplateId()));
 
         if (template.isEmpty()) {
-            // TODO send to audit topic;
             
+            //genPub.sendDataToAudit(template);
             throw new ValidationException(ErrorConstants.TEMPLATE_DOES_NOT_EXIST, HttpStatus.BAD_REQUEST.value());
         }
 
@@ -45,7 +47,8 @@ public class NotificationServiceImpl implements NotificationService {
         injestTopicDTO.setDynamicVariables(request.getDynamicVariables());
         injestTopicDTO.setNotificationType(request.getNotificationType());
 
-        // TODO publish to ingest topic
+        genPub.sendDataToIngest(injestTopicDTO);
+
 
     }
 
