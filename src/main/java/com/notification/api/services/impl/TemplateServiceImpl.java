@@ -101,10 +101,8 @@ class TemplateServiceImpl implements TemplateService {
     @Override
     public void deleteTemplate(final String id) {
 
-        templateDao.findByTenantIdAndId(CommonUtils.getCurrentTenantId(), UUID.fromString(id))
-                .orElseThrow(() -> new ValidationException(ErrorConstants.TEMPLATE_DOES_NOT_EXIST,
+        templateDao.deleteTemplateById(UUID.fromString(id),
+                () -> new ValidationException(ErrorConstants.TEMPLATE_DOES_NOT_EXIST,
                         HttpStatus.BAD_REQUEST.value()));
-
-        templateDao.deleteTemplateById(UUID.fromString(id));
     }
 }

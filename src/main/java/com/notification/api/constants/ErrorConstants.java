@@ -8,4 +8,8 @@ public interface ErrorConstants {
 
     String TEMPLATE_ID_REQUIRED = "Template ID is required";
 
+    String CACHE_PUT_ERROR = "Error while caching data";
+
+    String CACHE_GET_ERROR = "Error while fetching data from cache";
+
 }

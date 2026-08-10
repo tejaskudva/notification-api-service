@@ -2,6 +2,7 @@ package com.notification.api.dao.interfaces;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,6 @@ public interface TemplateDao {
 
     Optional<Template> findByTenantIdAndId(UUID tenantId, UUID id);
 
-    void deleteTemplateById(UUID id);
+    void deleteTemplateById(UUID id, Supplier<? extends Throwable> exceptionHandler);
 
 }

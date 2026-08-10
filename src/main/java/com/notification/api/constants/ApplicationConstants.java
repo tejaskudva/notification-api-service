@@ -6,4 +6,6 @@ public interface ApplicationConstants {
 
     String X_REQUEST_ID = "x-request-id";
 
+    String TEMPLATE_REDIS_PREFIX = "templates.";
+
 }
