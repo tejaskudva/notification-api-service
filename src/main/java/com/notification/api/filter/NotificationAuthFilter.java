@@ -31,12 +31,12 @@ public class NotificationAuthFilter extends OncePerRequestFilter {
             if (CommonUtils.isEmpty(tenantId)) {
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 response.getWriter().write("Unauthorized! API Key is required.");
-
-                String requestId = CommonUtils.generateUUID().toString();
-                MDC.put(ApplicationConstants.X_REQUEST_ID, requestId);
-                response.setHeader(ApplicationConstants.X_REQUEST_ID, requestId);
-
+                return;
             }
+
+            String requestId = CommonUtils.generateUUID().toString();
+            MDC.put(ApplicationConstants.X_REQUEST_ID, requestId);
+            response.setHeader(ApplicationConstants.X_REQUEST_ID, requestId);
 
             NotificationContextHolder.setContext(new NotificationContext(tenantId, false));
         }
