@@ -10,7 +10,10 @@ public interface ErrorConstants {
 
     String TEMPLATE_NAME_VALIDATION_BREACH = "Max template name length should be 100";
     String TEMPLATE_MSG_VALIDATION_BREACH = "Max message template length should be 10k";
-    String TEMPLATE_VARS_VALIDATION_BREACH = "Max template variable is missing or length greater than 20";
+    String TEMPLATE_VARS_VALIDATION_BREACH = "Template variable is missing or length greater than 20";
     String TEMPLATE_UPDATE_EMPTY_VALIDATION_BREACH = "No fields provided for updating template";
+
+    String NOTIF_TYPE_MISSING_VALIDATION_BREACH = "Notification Type is a mandatory field";
+    String NOTIF_VARS_MISSING_VALIDATION_BREACH = "Notification Dynamic Variables are mandatory";
 
 }

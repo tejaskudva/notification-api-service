@@ -1,5 +1,6 @@
 package com.notification.api.services.impl;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 class NotificationServiceImpl implements NotificationService {
-
     private final TemplateDao templateDao;
     private final GenericPublisher genPub;
 
@@ -34,10 +34,22 @@ class NotificationServiceImpl implements NotificationService {
                 UUID.fromString(request.getTemplateId()));
 
         if (template.isEmpty()) {
-            
-            //genPub.sendDataToAudit(template);
+
+            // genPub.sendDataToAudit(template);
             throw new ValidationException(ErrorConstants.TEMPLATE_DOES_NOT_EXIST, HttpStatus.BAD_REQUEST.value());
         }
+
+        template.ifPresent(t -> {
+
+            Map<String, Object> reqDynamicVars = request.getDynamicVariables();
+
+            if (t.getTemplateVariables().size() != reqDynamicVars.size()
+                    || t.getTemplateVariables().values().stream()
+                            .anyMatch(variable -> !reqDynamicVars.containsKey(variable))) {
+
+                throw new ValidationException("Invalid number of Dynamic Variables");
+            }
+        });
 
         InjestTopicDTO injestTopicDTO = new InjestTopicDTO();
         injestTopicDTO.setRequestId(CommonUtils.getCurrentTraceId());
@@ -48,7 +60,6 @@ class NotificationServiceImpl implements NotificationService {
         injestTopicDTO.setNotificationType(request.getNotificationType());
 
         genPub.sendDataToIngest(injestTopicDTO);
-
 
     }
 
