@@ -1,9 +1,13 @@
 package com.notification.api.exception.handler;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -14,6 +18,18 @@ import com.notification.api.utils.CommonUtils;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleMethodArgumentNotValidException(
+            MethodArgumentNotValidException e) {
+
+        Map<String, String> errors = new HashMap<>();
+        for (FieldError er : e.getBindingResult().getFieldErrors()) {
+            errors.put(er.getField(), er.getDefaultMessage());
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }
 
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<String> handleValidationException(ValidationException e) {
