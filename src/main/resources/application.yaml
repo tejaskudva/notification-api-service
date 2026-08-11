@@ -13,6 +13,17 @@ spring:
   kafka:
     bootstrap-servers: localhost:9092
 
+logging:
+  level:
+    org:
+      springframework:
+        data:
+          mongodb:
+            core:
+              MongoTemplate: INFO
+              MongoOperations: INFO
+
+
 kafka:
   ingest:
     topic: notification.ingest

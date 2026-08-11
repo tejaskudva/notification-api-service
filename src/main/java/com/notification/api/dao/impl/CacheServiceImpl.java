@@ -15,9 +15,11 @@ import com.notification.api.dao.interfaces.CacheService;
 import com.notification.api.exception.ValidationException;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 class CacheServiceImpl implements CacheService {
 
     private final RedisTemplate<String, String> redisTemplate;
@@ -74,9 +76,15 @@ class CacheServiceImpl implements CacheService {
     private <T> Optional<T> get(final String tenantId, final String hashKey, Class<T> clazz) {
         HashOperations<String, String, String> ops = redisTemplate.opsForHash();
         String jsonData = ops.get(getTenantCacheKey(tenantId), hashKey);
+
+        if(jsonData == null){
+            return Optional.empty();
+        }
+
         try {
             return Optional.ofNullable(mapper.readValue(jsonData, clazz));
         } catch (Exception e) {
+            log.error(ErrorConstants.CACHE_GET_ERROR, e);
             throw new ValidationException(ErrorConstants.CACHE_GET_ERROR, HttpStatus.BAD_REQUEST.value());
         }
     }
